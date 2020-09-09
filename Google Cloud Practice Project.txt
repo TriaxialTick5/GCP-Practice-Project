@@ -1,0 +1,89 @@
+2. “Translation” of 2-3 selected labs from Console instructions to 100% command line
+instructions.
+qwiklabs-gcp-01-ece819d8770a
+student-01-8e9f342defd1@qwiklabs.net
+
+Course: Essential Google Cloud Infrastructure: Foundation
+Module : Virtual Networks
+VPC Networking
+https://googlepluralsight.qwiklabs.com/focuses/10169026?parent=lti_session
+Task 1: Explore the default network
+
+gcloud compute networks list
+gcloud compute networks describe mynetwork1
+
+Task 2: Create an auto mode network
+
+gcloud compute networks create mynetwork1 \ --subnet-mode=auto \ --bgp-routing-mode=DYNAMIC_ROUTING_MODE
+
+
+Task 3: Create custom mode networks
+
+gcloud compute networks create managementnet \ --subnet-mode=custom \ --bgp-routing-mode=
+DYNAMIC_ROUTING_MODE
+gcloud compute networks create privatenet \ --subnet-mode=custom \ --bgp-routing-mode=
+DYNAMIC_ROUTING_MODE
+gcloud compute networks subnets create privatesubnet-us --network=privatenet --region=us-central1 --range=172.16.0.0/24
+gcloud compute networks subnets create privatesubnet-eu --network=privatenet --region=europe-west1 --range=172.20.0.0/20
+gcloud compute firewall-rules create privatenet-allow-icmp-ssh-rdp --direction=INGRESS --priority=1000 --network=privatenet --action=ALLOW --rules=icmp,tcp:22,tcp:3389 --source-ranges=0.0.0.0/0
+
+Task 4: Explore the connectivity across networks
+
+gcloud network-management connectivity-tests list
+
+gcloud network-management connectivity-tests create TestConn1 \ --source-instance= projects/myproject/zones/us-east1-b/instances privatenet --destination-instance= projects/myproject/zones/ us-central1-a/instances/ managementnet --protocol=TCP
+
+
+Module : Virtual Machines
+
+
+Creating Virtual Machines
+https://googlepluralsight.qwiklabs.com/focuses/10169049?parent=lti_session
+
+Task 1: Create a utility virtual machine
+
+gcloud config set project qwiklabs-gcp-01-ece819d8770a
+gcloud config set compute/zone us-central1-a
+gcloud compute instances create instance-2 \
+   --machine-type=machine-type \
+   --image-project=ml-images \
+   --image-family=tensorflow-vm-image \
+   --boot-disk-size=boot-disk-size \
+   --scopes=cloud-platform
+
+Task 2: Create a windows virtual machine
+
+gcloud compute images list --project windows-cloud --no-standard-images
+
+gcloud compute images describe [IMAGE_NAME] --project windows-cloud
+
+gcloud compute instances create [INSTANCE_NAME] \
+    --image-project windows-cloud \
+    --image-family [IMAGE_FAMILY] \
+    --machine-type [MACHINE_TYPE] \
+    --boot-disk-size [BOOT_DISK_SIZE] \
+    --boot-disk-type [BOOT_DISK_TYPE]
+
+
+Task 3: Create a custom virtual machine
+
+gcloud compute instances create example-instance \ --custom-cpu 4 --custom-memory 5
+
+
+
+Working with Virtual Machines
+https://googlepluralsight.qwiklabs.com/focuses/10169057?parent=lti_session
+
+Task 1: Create the VM
+Task 2: Prepare the data disk
+sudo mkdir -p /home/newdirect
+sudo mkfs.ext4 -F -E lazy_itable_init=0,\
+lazy_journal_init=0,discard \
+/dev/disk/by-id/google-minecraft-disk
+
+sudo mount -o discard,defaults /dev/disk/by-id/google-minecraft-disk /home/minecraft
+
+Task3: Install and run the application
+Task 4: Allow client traffic
+Task 5: Schedule regular backups
+Task 6: Server maintenance 
